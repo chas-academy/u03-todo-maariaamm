@@ -52,10 +52,26 @@ function addTask($taskData)
         header('Location: http://localhost:8081/index.php');
         exit();
     }
+
+    function deleteTask($task_id) {
+        global $conn;
+        if (!is_numeric($task_id)) {
+            die("Invalid task ID");
+        }
+        $query = $conn->prepare("DELETE FROM Tasks WHERE task_id = :task_id");
+        $query->bindParam(":task_id", $task_id, PDO::PARAM_INT);
+        $query->execute();
+        
+        header('Location: http://localhost:8081/index.php');
+        exit();
+    }
+
 if (isset($_POST['addTask'])) {
     if ($_POST['addTask'] == 'add') {
         addTask(['title' => $_POST['title'], 'description' => $_POST['description']]);
     } else if ($_POST['addTask'] == 'edit') {
         editTask(['task_id' => $_POST['task_id'], 'title' => $_POST ['title'], 'description' => $_POST['description'], 'task_id' => $_POST['task_id']]);
+    } else if ($_POST['addTask'] == 'delete') {
+        deleteTask($_POST['task_id']);
     }
 }

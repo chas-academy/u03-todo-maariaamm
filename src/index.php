@@ -1,3 +1,4 @@
+<html>
 <?php
 require_once 'Tasks.php';
 
@@ -27,25 +28,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['addTask'])) {
             }
             ?>
             <br>
-        <?php
-        } else if ($_GET['addTask'] == "edit") {
-            $Task = getTaskbyid($_GET['task_id']);
-        ?>
-               <br>      
+            <?php
+if (isset($_GET['addTask']) && $_GET['addTask'] === "edit") {
+    if (isset($_GET['task_id']) && is_numeric($_GET['task_id'])) {
+        $Task = getTaskbyid($_GET['task_id']);
+    } else {
+        echo "<p>Error: Invalid Task ID.</p>";
+        $Task = null; // Säkerhetsåtgärd
+    }
 
-            <h2>Edit task</h2>
-            
-            <form action="Tasks.php" method="POST">
-                <input type="hidden" name="task_id" value="<?php echo $Task['task_id'] ?>">
+    if (!empty($Task)) {
+?>
+    <h2>Edit task</h2>
+    <form action="Tasks.php" method="POST">
+        <input type="hidden" name="task_id" value="<?php echo htmlspecialchars($Task['task_id']); ?>">
+        <input type="text" name="title" value="<?php echo htmlspecialchars($Task['title']); ?>" required>
+        <br>
+        <input type="text" name="description" value="<?php echo htmlspecialchars($Task['description']); ?>" required>
+        <br>
+        <button type="submit" name="addTask" value="edit">Save</button>
+    </form>
+<?php
+    }
+}
+?>
 
-                <input type="text" name="title" value="<?php echo $Task['title'] ?>" required>
-                <br>
-
-                <input type="text" name="description" value="<?php echo $Task['description'] ?>" required>
-                <br>
-
-                <button type="submit" name="addTask" value="edit">Edit</button>
-            </form>
         <?php
         }
 
@@ -66,5 +73,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['addTask'])) {
         ?> 
     </ul>
 </body>
-
 </html>

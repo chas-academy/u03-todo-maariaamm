@@ -22,3 +22,10 @@ function dbConnect()
         throw new \PDOException($e->getMessage(), (int)$e->getCode());
     }
 }
+
+
+function dbDisconnect()
+{
+    global $conn;
+    $conn = null; // Stänger av anslutningen
+}

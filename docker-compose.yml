@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  db:
+    image: mariadb:latest
+    restart: unless-stopped
+    environment:
+      MARIADB_ROOT_PASSWORD: mariadb
+      MARIADB_DATABASE: todo_app
+    volumes:
+      - ./src/seed:/docker-entrypoint-initdb.d:ro
+    ports: 
+      - "3306:3306"
+    networks:
+      - todo-network
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+    networks:
+      - todo-network
+
+  php:
+      build:
+        context: .
+        dockerfile: Dockerfile
+      ports:
+        - 8081:80
+      volumes:
+        - ./src:/var/www/html/
+      environment:
+        - compose=true
+      networks:
+        - todo-network
+
+networks:
+  todo-network:
+    driver: bridge
